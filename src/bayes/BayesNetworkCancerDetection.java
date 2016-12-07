@@ -19,6 +19,7 @@ public class BayesNetworkCancerDetection {
 		}
 		System.out.print(data.get(1).toString());
 	}
+	
 	public static List<CancerData> getDataFromFile(Path path) throws IOException{
 		List<CancerData> data = new ArrayList<CancerData>();
 		List<String> file = new ArrayList<String>();
