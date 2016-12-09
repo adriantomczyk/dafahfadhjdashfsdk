@@ -1,0 +1,6 @@
+C:\Users\SND\PWR\miekkiemetodyobliczeniowe\LungCancerBayesNetwork\LungCancerBayesNetwork\bin\Debug\LungCancerBayesNetwork.exe.config
+C:\Users\SND\PWR\miekkiemetodyobliczeniowe\LungCancerBayesNetwork\LungCancerBayesNetwork\obj\Debug\LungCancerBayesNetwork.csprojResolveAssemblyReference.cache
+C:\Users\SND\PWR\miekkiemetodyobliczeniowe\LungCancerBayesNetwork\LungCancerBayesNetwork\bin\Debug\LungCancerBayesNetwork.exe
+C:\Users\SND\PWR\miekkiemetodyobliczeniowe\LungCancerBayesNetwork\LungCancerBayesNetwork\bin\Debug\LungCancerBayesNetwork.pdb
+C:\Users\SND\PWR\miekkiemetodyobliczeniowe\LungCancerBayesNetwork\LungCancerBayesNetwork\obj\Debug\LungCancerBayesNetwork.exe
+C:\Users\SND\PWR\miekkiemetodyobliczeniowe\LungCancerBayesNetwork\LungCancerBayesNetwork\obj\Debug\LungCancerBayesNetwork.pdb
