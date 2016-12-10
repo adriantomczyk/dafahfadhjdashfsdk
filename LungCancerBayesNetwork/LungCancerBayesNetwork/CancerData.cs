@@ -13,8 +13,10 @@ namespace LungCancerBayesNetwork
             this.cancerClass = cancerClass;
             this.attributes = attributes;
         }
-        private Int16 cancerClass { get; }
-        private Int16 [] attributes { get; }
+
+        private Int16 cancerClass { get; set; }
+        private Int16 [] attributes { get; set;}
+
         public String ToString()
         {
             String result = "";

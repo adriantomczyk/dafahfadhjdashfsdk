@@ -62,8 +62,10 @@ namespace LungCancerBayesNetwork
         }
         static void Main(string[] args)
         {
-            System.Console.Write(getDataFromFile("lung-cancer.data.txt").ElementAt(20).ToString());
-            System.Console.ReadKey();
+            LibraryTest libTest = new LibraryTest();
+            libTest.JustTest();
+            //System.Console.Write(getDataFromFile("lung-cancer.data.txt").ElementAt(20).ToString());
+            //System.Console.ReadKey();
         }
     }
 }
