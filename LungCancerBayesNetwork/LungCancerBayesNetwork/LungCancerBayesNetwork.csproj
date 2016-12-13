@@ -49,9 +49,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CancerData.cs" />
+    <Compile Include="DataSegmentator.cs" />
     <Compile Include="librarytest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SimulatedAnnealing.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
