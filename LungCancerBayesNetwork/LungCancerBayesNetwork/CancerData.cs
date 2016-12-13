@@ -17,7 +17,7 @@ namespace LungCancerBayesNetwork
         private Int16 cancerClass { get; set; }
         private Int16 [] attributes { get; set;}
 
-        public String ToString()
+        public override String ToString()
         {
             String result = "";
             result += "Class: " + cancerClass.ToString()+"\n";
