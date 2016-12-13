@@ -66,9 +66,6 @@ namespace LungCancerBayesNetwork
             DataSegmentator.generateDataSegmentation(data, 0.2);
             List<CancerData> ldata = DataSegmentator.learningData;
             List<CancerData> tdata = DataSegmentator.testData;
-            System.Console.WriteLine(ldata.Count);
-            System.Console.WriteLine(tdata.Count);
-            System.Console.ReadKey();
             //LibraryTest libTest = new LibraryTest();
             //libTest.JustTest();
             //System.Console.Write(getDataFromFile("lung-cancer.data.txt").ElementAt(20).ToString());
