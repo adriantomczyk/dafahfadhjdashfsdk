@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="CancerData.cs" />
     <Compile Include="DataSegmentator.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="librarytest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

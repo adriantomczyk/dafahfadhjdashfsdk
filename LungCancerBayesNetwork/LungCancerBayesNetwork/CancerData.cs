@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LungCancerBayesNetwork
 {
-    class CancerData
+    public class CancerData
     {
         public CancerData(Int16 cancerClass, Int16 [] attributes)
         {
