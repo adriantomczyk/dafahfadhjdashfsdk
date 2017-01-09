@@ -63,14 +63,19 @@ namespace LungCancerBayesNetwork
         static void Main(string[] args)
         {
             List<CancerData> data = getDataFromFile("lung-cancer.data.txt");
-            DataSegmentator.generateDataSegmentation(data, 0.2);
+
+            LungCancerBayes bayes = new LungCancerBayes(data);
+            bayes.CreateStructre();
+            
+            
+            /*DataSegmentator.generateDataSegmentation(data, 0.2);
             List<CancerData> ldata = DataSegmentator.learningData;
             List<CancerData> tdata = DataSegmentator.testData;
             System.Console.WriteLine(tdata.ElementAt(0));
             System.Console.WriteLine(tdata.ElementAt(1));
             System.Console.WriteLine(tdata.ElementAt(2));
-            Int32[] indexes = { 0 };
-            double [] result = CancerData.countProbabilityDistributionForChildVertex(tdata, 2,indexes);
+            Int32[] indexes = { 3,26,38 };
+            double [] result = CancerData.countProbabilityDistributionForChildVertex(tdata, 6, indexes);
             for (int i=0;i<1;i++)
             {
                 for (int j = 0; j < 4; j++)
@@ -92,7 +97,7 @@ namespace LungCancerBayesNetwork
             //LibraryTest libTest = new LibraryTest();
             //libTest.JustTest();
             //System.Console.Write(getDataFromFile("lung-cancer.data.txt").ElementAt(20).ToString());
-            //System.Console.ReadKey();
+            //System.Console.ReadKey();*/
         }
     }
 }

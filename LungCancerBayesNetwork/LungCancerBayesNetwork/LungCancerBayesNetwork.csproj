@@ -52,6 +52,7 @@
     <Compile Include="DataSegmentator.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="librarytest.cs" />
+    <Compile Include="LungCancerBayes.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SimulatedAnnealing.cs" />
