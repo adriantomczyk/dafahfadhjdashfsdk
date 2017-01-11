@@ -13,6 +13,8 @@ namespace LungCancerBayesNetwork
         private List<CancerData> Ldata { get; set; }
         private List<CancerData> Tdata { get; set; }
         private Network Net { get; set; }
+        private List<BayesStructureSchema> Schema { get; set; }
+        //private List<string> AvailableStates { get; set; }
 
         public LungCancerBayes(List<CancerData> cancerData)
         {
@@ -26,6 +28,17 @@ namespace LungCancerBayesNetwork
             this.Ldata = DataSegmentator.learningData;
             this.Tdata = DataSegmentator.testData;
             this.Net = new Network();
+
+            Schema = new List<BayesStructureSchema>();
+            Schema.Add(new BayesStructureSchema("c6", new List<string>() { "p3", "p26", "p38" }));
+            Schema.Add(new BayesStructureSchema("c2", new List<string>() { "p3", "p26", "p38" }));
+
+            Schema.Add(new BayesStructureSchema("c20", new List<string>() { "p13", "p29", "p41" }));
+            Schema.Add(new BayesStructureSchema("c56", new List<string>() { "p13", "p29", "p41" }));
+
+            Schema.Add(new BayesStructureSchema("c19", new List<string>() { "p15", "p37", "p42" }));
+
+            //AvailableStates = new List<string>() { "s0", "s1", "s2", "s3"};
         }
 
         private void SetNodeStates(string nodeId)
@@ -38,7 +51,7 @@ namespace LungCancerBayesNetwork
             Net.DeleteOutcome(nodeId, 0);
         }
 
-        public double[] CreateStructre()
+        public void CreateStructre()
         {
             double[] childProbability;
             double[] parentProbability;
@@ -95,11 +108,11 @@ namespace LungCancerBayesNetwork
             childProbability = CancerData.countProbabilityDistributionForChildVertex(Ldata, 6, SetIndexes(3, 26, 38));
             Net.AddNode(Network.NodeType.Cpt, "c6");
 
+            SetNodeStates("c6");
             Net.AddArc("p3", "c6");
             Net.AddArc("p26", "c6");
             Net.AddArc("p38", "c6");
             
-            SetNodeStates("c6");
             Net.SetNodeDefinition("c6", childProbability);
 
             childProbability = CancerData.countProbabilityDistributionForChildVertex(Ldata, 2, SetIndexes(3, 26, 38));
@@ -146,8 +159,44 @@ namespace LungCancerBayesNetwork
 
 
             Net.WriteFile("lungcancer.xdsl");
-            return null;
         }
+
+        public List<BayesResult> GetResults()
+        {
+            List<BayesResult> result = new List<BayesResult>();
+            Net.UpdateBeliefs();
+            foreach (BayesStructureSchema child in Schema)
+            {
+                for(int i=0; i<4; i++)
+                {
+                    Net.SetEvidence(child.ChildId, "s" + i.ToString());
+                    Net.UpdateBeliefs();
+                    foreach (string parent in child.Parents)
+                    {
+                        for(int j=0; j<4; ++j)
+                        {
+                            //var f = Net.GetNodeValue(parent);
+                            double probability = (Net.GetNodeValue(parent))[j];
+                            result.Add(new BayesResult(parent, "s" + j.ToString(), child.ChildId, "s" + i.ToString(), probability));
+                        }
+                    }
+                    Net.ClearEvidence(child.ChildId);
+                }
+
+            }
+            return result; 
+        }
+
+        public void PrintResult(List<BayesResult> result)
+        {
+            foreach(BayesResult b in result)
+            {
+                Console.WriteLine(b.ToString());
+            }
+        }
+
+
+
 
         private Int32[] SetIndexes(int idx1, int idx2, int idx3)
         {
