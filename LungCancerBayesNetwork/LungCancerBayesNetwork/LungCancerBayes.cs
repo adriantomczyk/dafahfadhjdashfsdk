@@ -50,11 +50,21 @@ namespace LungCancerBayesNetwork
             Net.DeleteOutcome(nodeId, 0);
             Net.DeleteOutcome(nodeId, 0);
         }
+        private void SetNodeStateParent(string nodeId)
+        {
+            for (int i = 1; i <= 3; i++)
+            {
+                Net.AddOutcome(nodeId, "s" + i.ToString());
+            }
+            Net.DeleteOutcome(nodeId, 0);
+            Net.DeleteOutcome(nodeId, 0);
+        }
 
         public void CreateStructre()
         {
             double[] childProbability;
             double[] parentProbability;
+            double[] resultProbability;
 
             //Left
             parentProbability = CancerData.countProbabilityForParentVertex(Ldata, 3);
@@ -157,6 +167,17 @@ namespace LungCancerBayesNetwork
             SetNodeStates("c19");
             Net.SetNodeDefinition("c19", childProbability);
 
+            //Result
+            resultProbability = CancerData.countProbabilityDistributionForResult(Ldata, SetIndexes(6,2,20));
+            Net.AddNode(Network.NodeType.Cpt, "result");
+
+            Net.AddArc("c6", "result");
+            Net.AddArc("c2", "result");
+            Net.AddArc("c20", "result");
+
+            SetNodeStateParent("result");
+            Net.SetNodeDefinition("result", resultProbability);
+
 
             Net.WriteFile("lungcancer.xdsl");
         }
@@ -167,13 +188,13 @@ namespace LungCancerBayesNetwork
             Net.UpdateBeliefs();
             foreach (BayesStructureSchema child in Schema)
             {
-                for(int i=0; i<4; i++)
+                for (int i = 0; i < 4; i++)
                 {
                     Net.SetEvidence(child.ChildId, "s" + i.ToString());
                     Net.UpdateBeliefs();
                     foreach (string parent in child.Parents)
                     {
-                        for(int j=0; j<4; ++j)
+                        for (int j = 0; j < 4; ++j)
                         {
                             //var f = Net.GetNodeValue(parent);
                             double probability = (Net.GetNodeValue(parent))[j];

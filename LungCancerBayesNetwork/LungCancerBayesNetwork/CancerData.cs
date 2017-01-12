@@ -44,6 +44,10 @@ namespace LungCancerBayesNetwork
             {
                 result[i] /= data.Count;
             }
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] += 0.01;
+            }
             return result;
         }
 
@@ -74,6 +78,10 @@ namespace LungCancerBayesNetwork
             {
                 result[i] /= data.Count;
             }
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] += 0.01;
+            }
             return result;
         }
 
@@ -90,6 +98,10 @@ namespace LungCancerBayesNetwork
             for (int i = 0; i < result.Length; i++)
             {
                 result[i] /= data.Count;
+            }
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] += 0.01;
             }
             return result;
         }
