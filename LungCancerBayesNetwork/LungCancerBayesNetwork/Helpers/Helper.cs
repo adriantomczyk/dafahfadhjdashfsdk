@@ -1,26 +1,18 @@
-﻿using System;
+﻿using LungCancerBayesNetwork.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LungCancerBayesNetwork
+namespace LungCancerBayesNetwork.Helpers
 {
-    public class CancerData
+    public static class Helper
     {
-        public CancerData(Int16 cancerClass, Int16 [] attributes)
+        public static double[] CountProbabilityDistributionForChildVertex(List<CancerData> data, Int32 elementIndex, Int32[] childAttributesIndexes)
         {
-            this.cancerClass = cancerClass;
-            this.attributes = attributes;
-        }
-
-        public Int16 cancerClass { get; set; }
-        public Int16 [] attributes { get; set;}
-
-        public static double [] countProbabilityDistributionForChildVertex(List<CancerData> data, Int32 elementIndex, Int32 [] childAttributesIndexes)
-        {
-            double[] result = new double[(int)Math.Pow(4,childAttributesIndexes.Length+1)];
-            foreach(CancerData element in data)
+            double[] result = new double[(int)Math.Pow(4, childAttributesIndexes.Length + 1)];
+            foreach (CancerData element in data)
             {
                 //Int32 attrIndex = 0;
                 //foreach (Int32 index in childAttributesIndexes)
@@ -34,13 +26,13 @@ namespace LungCancerBayesNetwork
                 //    }
                 //    attrIndex++;
                 //}
-                int x = element.attributes[elementIndex-1] * 64;
-                int y = element.attributes[childAttributesIndexes[0]-1] * 16;
-                int z = element.attributes[childAttributesIndexes[1]-1] * 4; 
-                int t = element.attributes[childAttributesIndexes[2]-1];
-                if(x>0 && y>0 && z>0 && t>0)result[x+y+z+t]++;
+                int x = element.attributes[elementIndex - 1] * 64;
+                int y = element.attributes[childAttributesIndexes[0] - 1] * 16;
+                int z = element.attributes[childAttributesIndexes[1] - 1] * 4;
+                int t = element.attributes[childAttributesIndexes[2] - 1];
+                if (x > 0 && y > 0 && z > 0 && t > 0) result[x + y + z + t]++;
             }
-            for(int i = 0; i < result.Length; i++)
+            for (int i = 0; i < result.Length; i++)
             {
                 result[i] /= data.Count;
             }
@@ -51,16 +43,16 @@ namespace LungCancerBayesNetwork
             return result;
         }
 
-        public static double[] countProbabilityDistributionForResult(List<CancerData> data, Int32[] childAttributesIndexes)
+        public static double[] CountProbabilityDistributionForResult(List<CancerData> data, Int32[] childAttributesIndexes)
         {
-            double[] result = new double[3 * (int)Math.Pow(4,childAttributesIndexes.Length)];
+            double[] result = new double[3 * (int)Math.Pow(4, childAttributesIndexes.Length)];
             foreach (CancerData element in data)
             {
-                int x = (element.cancerClass-1) * 48;
-                int y = element.attributes[childAttributesIndexes[0]-1] * 16;
-                int z = element.attributes[childAttributesIndexes[1]-1] * 4;
-                int t = element.attributes[childAttributesIndexes[2]-1];
-                if(x>0 && y>0 && z>0 && t>0) result[x + y + z + t]++;
+                int x = (element.cancerClass - 1) * 48;
+                int y = element.attributes[childAttributesIndexes[0] - 1] * 16;
+                int z = element.attributes[childAttributesIndexes[1] - 1] * 4;
+                int t = element.attributes[childAttributesIndexes[2] - 1];
+                if (x > 0 && y > 0 && z > 0 && t > 0) result[x + y + z + t]++;
                 //    Int32 attrIndex = 0;
                 //    foreach (Int32 index in childAttributesIndexes)
                 //    {
@@ -85,14 +77,14 @@ namespace LungCancerBayesNetwork
             return result;
         }
 
-        public static double[] countProbabilityForParentVertex(List<CancerData> data, Int32 elementIndex)
+        public static double[] CountProbabilityForParentVertex(List<CancerData> data, Int32 elementIndex)
         {
             double[] result = new double[4];
             foreach (CancerData element in data)
             {
-                if (element.attributes[elementIndex-1] >= 0)
+                if (element.attributes[elementIndex - 1] >= 0)
                 {
-                    result[element.attributes[elementIndex-1]]++;
+                    result[element.attributes[elementIndex - 1]]++;
                 }
             }
             for (int i = 0; i < result.Length; i++)
@@ -103,13 +95,6 @@ namespace LungCancerBayesNetwork
             {
                 result[i] += 0.01;
             }
-            return result;
-        }
-        public override String ToString()
-        {
-            String result = "";
-            result += "Class: " + cancerClass.ToString()+"\n";
-            result += "Attributes: " + String.Join(",",attributes);
             return result;
         }
     }

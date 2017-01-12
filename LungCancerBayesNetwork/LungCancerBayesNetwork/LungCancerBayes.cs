@@ -1,4 +1,6 @@
-﻿using Smile;
+﻿using LungCancerBayesNetwork.Helpers;
+using LungCancerBayesNetwork.Models;
+using Smile;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,55 +71,55 @@ namespace LungCancerBayesNetwork
             double[] resultProbability;
 
             //Left
-            parentProbability = CancerData.countProbabilityForParentVertex(Ldata, 3);
+            parentProbability = Helper.CountProbabilityForParentVertex(Ldata, 3);
             Net.AddNode(Network.NodeType.Cpt, "p3");
             SetNodeStates("p3");
             Net.SetNodeDefinition("p3", parentProbability);
 
-            parentProbability = CancerData.countProbabilityForParentVertex(Ldata, 26);
+            parentProbability = Helper.CountProbabilityForParentVertex(Ldata, 26);
             Net.AddNode(Network.NodeType.Cpt, "p26");
             SetNodeStates("p26");
             Net.SetNodeDefinition("p26", parentProbability);
 
-            parentProbability = CancerData.countProbabilityForParentVertex(Ldata, 38);
+            parentProbability = Helper.CountProbabilityForParentVertex(Ldata, 38);
             Net.AddNode(Network.NodeType.Cpt, "p38");
             SetNodeStates("p38");
             Net.SetNodeDefinition("p38", parentProbability);
 
             //Middle
-            parentProbability = CancerData.countProbabilityForParentVertex(Ldata, 13);
+            parentProbability = Helper.CountProbabilityForParentVertex(Ldata, 13);
             Net.AddNode(Network.NodeType.Cpt, "p13");
             SetNodeStates("p13");
             Net.SetNodeDefinition("p13", parentProbability);
 
-            parentProbability = CancerData.countProbabilityForParentVertex(Ldata, 29);
+            parentProbability = Helper.CountProbabilityForParentVertex(Ldata, 29);
             Net.AddNode(Network.NodeType.Cpt, "p29");
             SetNodeStates("p29");
             Net.SetNodeDefinition("p29", parentProbability);
 
-            parentProbability = CancerData.countProbabilityForParentVertex(Ldata, 41);
+            parentProbability = Helper.CountProbabilityForParentVertex(Ldata, 41);
             Net.AddNode(Network.NodeType.Cpt, "p41");
             SetNodeStates("p41");
             Net.SetNodeDefinition("p41", parentProbability);
 
             //Right
-            parentProbability = CancerData.countProbabilityForParentVertex(Ldata, 15);
+            parentProbability = Helper.CountProbabilityForParentVertex(Ldata, 15);
             Net.AddNode(Network.NodeType.Cpt, "p15");
             SetNodeStates("p15");
             Net.SetNodeDefinition("p15", parentProbability);
 
-            parentProbability = CancerData.countProbabilityForParentVertex(Ldata, 37);
+            parentProbability = Helper.CountProbabilityForParentVertex(Ldata, 37);
             Net.AddNode(Network.NodeType.Cpt, "p37");
             SetNodeStates("p37");
             Net.SetNodeDefinition("p37", parentProbability);
 
-            parentProbability = CancerData.countProbabilityForParentVertex(Ldata, 42);
+            parentProbability = Helper.CountProbabilityForParentVertex(Ldata, 42);
             Net.AddNode(Network.NodeType.Cpt, "p42");
             SetNodeStates("p42");
             Net.SetNodeDefinition("p42", parentProbability);
 
             //Left
-            childProbability = CancerData.countProbabilityDistributionForChildVertex(Ldata, 6, SetIndexes(3, 26, 38));
+            childProbability = Helper.CountProbabilityDistributionForChildVertex(Ldata, 6, SetIndexes(3, 26, 38));
             Net.AddNode(Network.NodeType.Cpt, "c6");
 
             SetNodeStates("c6");
@@ -127,7 +129,7 @@ namespace LungCancerBayesNetwork
             
             Net.SetNodeDefinition("c6", childProbability);
 
-            childProbability = CancerData.countProbabilityDistributionForChildVertex(Ldata, 2, SetIndexes(3, 26, 38));
+            childProbability = Helper.CountProbabilityDistributionForChildVertex(Ldata, 2, SetIndexes(3, 26, 38));
             Net.AddNode(Network.NodeType.Cpt, "c2");
 
             Net.AddArc("p3", "c2");
@@ -138,7 +140,7 @@ namespace LungCancerBayesNetwork
             Net.SetNodeDefinition("c2", childProbability);
 
             //Middle
-            childProbability = CancerData.countProbabilityDistributionForChildVertex(Ldata, 20, SetIndexes(13, 29, 41));
+            childProbability = Helper.CountProbabilityDistributionForChildVertex(Ldata, 20, SetIndexes(13, 29, 41));
             Net.AddNode(Network.NodeType.Cpt, "c20");
 
             Net.AddArc("p13", "c20");
@@ -148,7 +150,7 @@ namespace LungCancerBayesNetwork
             SetNodeStates("c20");
             Net.SetNodeDefinition("c20", childProbability);
 
-            childProbability = CancerData.countProbabilityDistributionForChildVertex(Ldata, 56, SetIndexes(13, 29, 41));
+            childProbability = Helper.CountProbabilityDistributionForChildVertex(Ldata, 56, SetIndexes(13, 29, 41));
             Net.AddNode(Network.NodeType.Cpt, "c56");
 
             Net.AddArc("p13", "c56");
@@ -159,7 +161,7 @@ namespace LungCancerBayesNetwork
             Net.SetNodeDefinition("c56", childProbability);
 
             //Right
-            childProbability = CancerData.countProbabilityDistributionForChildVertex(Ldata, 19, SetIndexes(15, 37, 42));
+            childProbability = Helper.CountProbabilityDistributionForChildVertex(Ldata, 19, SetIndexes(15, 37, 42));
             Net.AddNode(Network.NodeType.Cpt, "c19");
 
             Net.AddArc("p15", "c19");
@@ -170,7 +172,7 @@ namespace LungCancerBayesNetwork
             Net.SetNodeDefinition("c19", childProbability);
 
             //Result
-            resultProbability = CancerData.countProbabilityDistributionForResult(Ldata, SetIndexes(6,2,20));
+            resultProbability = Helper.CountProbabilityDistributionForResult(Ldata, SetIndexes(6, 2, 20));
             Net.AddNode(Network.NodeType.Cpt, "result");
 
             Net.AddArc("c6", "result");
