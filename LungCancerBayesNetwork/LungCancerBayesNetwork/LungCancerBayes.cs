@@ -222,16 +222,19 @@ namespace LungCancerBayesNetwork
                 foreach (string attr in StructureAttributes)
                 {
                     int idx = this.AttritubeToIndex(attr);
-                    Net.SetEvidence(attr, "s" + testData.attributes[idx]);
-                    Net.UpdateBeliefs();       
-                    int cancerClass = this.ClassForMaxElement(Net.GetNodeValue("result"));
-                    if(cancerClass == testData.cancerClass)
+                    if (testData.attributes[idx] > -1)
                     {
-                        result.Good++;
-                    }
-                    else
-                    {
-                        result.Bad++;
+                        Net.SetEvidence(attr, "s" + testData.attributes[idx]);
+                        Net.UpdateBeliefs();
+                        int cancerClass = this.ClassForMaxElement(Net.GetNodeValue("result"));
+                        if (cancerClass == testData.cancerClass)
+                        {
+                            result.Good++;
+                        }
+                        else
+                        {
+                            result.Bad++;
+                        }
                     }
                 }
             }
