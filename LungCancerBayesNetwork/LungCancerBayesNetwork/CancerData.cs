@@ -14,8 +14,8 @@ namespace LungCancerBayesNetwork
             this.attributes = attributes;
         }
 
-        private Int16 cancerClass { get; set; }
-        private Int16 [] attributes { get; set;}
+        public Int16 cancerClass { get; set; }
+        public Int16 [] attributes { get; set;}
 
         public static double [] countProbabilityDistributionForChildVertex(List<CancerData> data, Int32 elementIndex, Int32 [] childAttributesIndexes)
         {

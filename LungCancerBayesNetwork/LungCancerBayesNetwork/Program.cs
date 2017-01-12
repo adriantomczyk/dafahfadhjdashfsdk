@@ -66,7 +66,8 @@ namespace LungCancerBayesNetwork
 
             LungCancerBayes bayes = new LungCancerBayes(data);
             bayes.CreateStructre();
-            bayes.PrintResult(bayes.GetResults());
+            //bayes.PrintResult(bayes.GetResults());
+            bayes.PrintResult(bayes.GetResult());
             Console.ReadLine();
             
             

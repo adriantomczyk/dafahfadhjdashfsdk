@@ -29,4 +29,10 @@ namespace LungCancerBayesNetwork
         }
         
     }
+
+    public class BayesResult2
+    {
+        public int Good { get; set; }
+        public int Bad { get; set; }
+    }
 }

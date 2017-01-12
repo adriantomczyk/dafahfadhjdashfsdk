@@ -16,6 +16,8 @@ namespace LungCancerBayesNetwork
         private List<BayesStructureSchema> Schema { get; set; }
         //private List<string> AvailableStates { get; set; }
 
+        private List<string> StructureAttributes { get; set; }
+
         public LungCancerBayes(List<CancerData> cancerData)
         {
             Data = cancerData;
@@ -38,7 +40,7 @@ namespace LungCancerBayesNetwork
 
             Schema.Add(new BayesStructureSchema("c19", new List<string>() { "p15", "p37", "p42" }));
 
-            //AvailableStates = new List<string>() { "s0", "s1", "s2", "s3"};
+            StructureAttributes = new List<string>() { "p3", "p26", "p38", "p13", "p29", "p41", "p15", "p37", "p42", "c6", "c2", "c20", "c56", "c19" };
         }
 
         private void SetNodeStates(string nodeId)
@@ -182,6 +184,7 @@ namespace LungCancerBayesNetwork
             Net.WriteFile("lungcancer.xdsl");
         }
 
+        /*
         public List<BayesResult> GetResults()
         {
             List<BayesResult> result = new List<BayesResult>();
@@ -194,10 +197,9 @@ namespace LungCancerBayesNetwork
                     Net.UpdateBeliefs();
                     foreach (string parent in child.Parents)
                     {
-                        for (int j = 0; j < 4; ++j)
-                        {
-                            //var f = Net.GetNodeValue(parent);
-                            double probability = (Net.GetNodeValue(parent))[j];
+                        for (int j = 0; j < 3; ++j)
+                        {                           //var f = Net.GetNodeValue(parent);
+                            double probability = (Net.GetNodeValue("result"))[j];
                             result.Add(new BayesResult(parent, "s" + j.ToString(), child.ChildId, "s" + i.ToString(), probability));
                         }
                     }
@@ -205,9 +207,64 @@ namespace LungCancerBayesNetwork
                 }
 
             }
-            return result; 
+            return result;
+        }
+        */
+        public BayesResult2 GetResult()
+        {
+            BayesResult2 result = new BayesResult2();
+
+            Net.UpdateBeliefs();
+            foreach (CancerData testData in this.Tdata)
+            {
+                foreach (string attr in StructureAttributes)
+                {
+                    int idx = this.AttritubeToIndex(attr);
+                    Net.SetEvidence(attr, "s" + testData.attributes[idx]);
+                    Net.UpdateBeliefs();       
+                    int cancerClass = this.ClassForMaxElement(Net.GetNodeValue("result"));
+                    if(cancerClass == testData.cancerClass)
+                    {
+                        result.Good++;
+                    }
+                    else
+                    {
+                        result.Bad++;
+                    }
+                }
+            }
+
+            return result;
         }
 
+        private int ClassForMaxElement(double[] array)
+        {
+            if(array == null || array.Length < 1)
+            {
+                return -1;
+            }
+
+            int idx = 0;
+            double maxValue = array[0];
+            for (int i = 1; i < array.Length; ++i )
+            {
+                if(array[i] > maxValue)
+                {
+                    maxValue = array[i];
+                    idx = i;
+                }
+            }
+
+            return (idx+1);
+        }
+
+        private int AttritubeToIndex(string attr)
+        {
+            int result;
+            Int32.TryParse(attr.Substring(1), out result);
+            return (result - 1);
+        }
+        /*
         public void PrintResult(List<BayesResult> result)
         {
             foreach(BayesResult b in result)
@@ -215,8 +272,11 @@ namespace LungCancerBayesNetwork
                 Console.WriteLine(b.ToString());
             }
         }
-
-
+        */
+        public void PrintResult(BayesResult2 result)
+        {
+            Console.WriteLine("Good: {0}, Bad: {1}", result.Good, result.Bad);
+        }
 
 
         private Int32[] SetIndexes(int idx1, int idx2, int idx3)
