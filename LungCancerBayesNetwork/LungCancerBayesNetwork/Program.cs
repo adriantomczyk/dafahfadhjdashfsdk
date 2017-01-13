@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LungCancerBayesNetwork.Models;
+using LungCancerBayesNetwork.Helpers;
 
 namespace LungCancerBayesNetwork
 {
@@ -67,8 +68,113 @@ namespace LungCancerBayesNetwork
 
             LungCancerBayes bayes = new LungCancerBayes(data);
             bayes.CreateStructre();
-            //bayes.PrintResult(bayes.GetResults());
             bayes.PrintResult(bayes.GetResult());
+            //Console.ReadLine();
+
+
+            List<BayesNode> structure = new List<BayesNode>();
+ 
+            structure.Add(new BayesNode
+            {
+                Layers = new List<List<int>>()
+                    {
+                        new List<int>() {3,26,38},
+                        new List<int>() {6,2}
+                    }
+            });
+
+            structure.Add(new BayesNode
+            {
+                Layers = new List<List<int>>()
+                    {
+                        new List<int>() {13,29,41},
+                        new List<int>() {20,56}
+                    }
+            });
+
+            structure.Add(new BayesNode
+            {
+                Layers = new List<List<int>>()
+                    {
+                        new List<int>() {15,37,42},
+                        new List<int>() {19}
+                    }
+            });
+
+            bayes.Clear();
+            bayes.SetFileName("test2");
+            bayes.CreateStructre(structure);
+            bayes.PrintResult(bayes.GetResult(structure));
+
+            structure = new List<BayesNode>();
+
+            structure.Add(new BayesNode
+            {
+                Layers = new List<List<int>>()
+                    {
+                        new List<int>() {3,26,38}
+                    }
+            });
+
+            structure.Add(new BayesNode
+            {
+                Layers = new List<List<int>>()
+                    {
+                        new List<int>() {13,29,41}
+                    }
+            });
+
+            structure.Add(new BayesNode
+            {
+                Layers = new List<List<int>>()
+                    {
+                        new List<int>() {15,37,42}
+                    }
+            });
+
+            bayes.Clear();
+            bayes.SetFileName("test3");
+            bayes.CreateStructre(structure);
+            bayes.PrintResult(bayes.GetResult(structure));
+
+
+            structure = new List<BayesNode>();
+
+            structure.Add(new BayesNode
+            {
+                Layers = new List<List<int>>()
+                    {
+                        new List<int>() {3,26,38,7},
+                        new List<int>() {6,2,30},
+                        new List<int>() {25,27}
+                    }
+            });
+
+            structure.Add(new BayesNode
+            {
+                Layers = new List<List<int>>()
+                    {
+                        new List<int>() {13,29,41},
+                        new List<int>() {20,56,44},
+                        new List<int>() {11}
+                    }
+            });
+
+            structure.Add(new BayesNode
+            {
+                Layers = new List<List<int>>()
+                    {
+                        new List<int>() {15,37,42},
+                        new List<int>() {19,39,18},
+                        new List<int>() {4}
+                    }
+            });
+
+            bayes.Clear();
+            bayes.SetFileName("test4");
+            bayes.CreateStructre(structure);
+            bayes.PrintResult(bayes.GetResult(structure));
+
             Console.ReadLine();
         }
     }

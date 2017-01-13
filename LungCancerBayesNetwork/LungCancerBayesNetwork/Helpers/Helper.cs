@@ -9,9 +9,9 @@ namespace LungCancerBayesNetwork.Helpers
 {
     public static class Helper
     {
-        public static double[] CountProbabilityDistributionForChildVertex(List<CancerData> data, Int32 elementIndex, Int32[] childAttributesIndexes)
+        public static double[] CountProbabilityDistributionForChildVertex(List<CancerData> data, Int32 elementIndex, List<int> childAttributesIndexes)
         {
-            double[] result = new double[(int)Math.Pow(4, childAttributesIndexes.Length + 1)];
+            double[] result = new double[(int)Math.Pow(4, childAttributesIndexes.Count + 1)];
             foreach (CancerData element in data)
             {
                 //Int32 attrIndex = 0;
@@ -43,9 +43,9 @@ namespace LungCancerBayesNetwork.Helpers
             return result;
         }
 
-        public static double[] CountProbabilityDistributionForResult(List<CancerData> data, Int32[] childAttributesIndexes)
+        public static double[] CountProbabilityDistributionForResult(List<CancerData> data, List<int> childAttributesIndexes)
         {
-            double[] result = new double[3 * (int)Math.Pow(4, childAttributesIndexes.Length)];
+            double[] result = new double[3 * (int)Math.Pow(4, childAttributesIndexes.Count)];
             foreach (CancerData element in data)
             {
                 int x = (element.cancerClass - 1) * 48;

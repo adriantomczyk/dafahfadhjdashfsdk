@@ -16,7 +16,9 @@ namespace LungCancerBayesNetwork
         private List<CancerData> Tdata { get; set; }
         private Network Net { get; set; }
         private List<BayesStructureSchema> Schema { get; set; }
+        private List<BayesNode> BayesStructure { get; set; }
         //private List<string> AvailableStates { get; set; }
+        private string FileName { get; set; }
 
         private List<string> StructureAttributes { get; set; }
 
@@ -24,6 +26,12 @@ namespace LungCancerBayesNetwork
         {
             Data = cancerData;
             this.Init();
+        }
+
+        public LungCancerBayes(List<CancerData> cancerData, List<BayesNode> bayesStructure)
+        {
+            Data = cancerData;
+            BayesStructure = bayesStructure;
         }
 
         private void Init()
@@ -43,6 +51,16 @@ namespace LungCancerBayesNetwork
             Schema.Add(new BayesStructureSchema("c19", new List<string>() { "p15", "p37", "p42" }));
 
             StructureAttributes = new List<string>() { "p3", "p26", "p38", "p13", "p29", "p41", "p15", "p37", "p42", "c6", "c2", "c20", "c56", "c19" };
+        }
+
+        public void SetFileName(string fileName)
+        {
+            this.FileName = fileName;
+        }
+
+        public void Clear()
+        {
+            this.Net = new Network();
         }
 
         private void SetNodeStates(string nodeId)
@@ -172,8 +190,8 @@ namespace LungCancerBayesNetwork
             Net.SetNodeDefinition("c19", childProbability);
 
             //Result
-            Int32[] indexes = { 6, 2, 20, 56, 19 };
-            resultProbability = Helper.CountProbabilityDistributionForResult(Ldata,indexes );
+            List<int> indexes = new List<int>() { 6, 2, 20, 56, 19 };
+            resultProbability = Helper.CountProbabilityDistributionForResult(Ldata,indexes);
             Net.AddNode(Network.NodeType.Cpt, "result");
 
             Net.AddArc("c6", "result");
@@ -188,6 +206,63 @@ namespace LungCancerBayesNetwork
 
             Net.WriteFile("lungcancer.xdsl");
         }
+
+        public void CreateStructre(List<BayesNode> BayesStructure)
+        {
+            double[] probability;
+            List<int> AddedVertexes = new List<int>();
+
+            foreach (BayesNode node in BayesStructure)
+            {
+                for (int i = 0; i < node.Layers.Count; ++i)
+                {
+                    for (int j = 0; j < node.Layers[i].Count; ++j)
+                    {
+                        if (i == 0)
+                        {
+                            probability = Helper.CountProbabilityForParentVertex(Ldata, node.Layers[i][j]);
+                            Net.AddNode(Network.NodeType.Cpt, "n" + node.Layers[i][j].ToString());
+                            SetNodeStates("n" + node.Layers[i][j].ToString());
+                            Net.SetNodeDefinition("n" + node.Layers[i][j].ToString(), probability);
+                        }
+                        else
+                        {
+                            probability = Helper.CountProbabilityDistributionForChildVertex(Ldata, 6, node.Layers[i - 1]);
+                            Net.AddNode(Network.NodeType.Cpt, "n" + node.Layers[i][j].ToString());
+                            SetNodeStates("n" + node.Layers[i][j].ToString());
+                            foreach (int vertex in node.Layers[i - 1])
+                            {
+                                Net.AddArc("n" + vertex.ToString(), "n" + node.Layers[i][j].ToString());
+                            }
+                        }
+                    }
+                }
+            }
+
+
+
+            //Result
+            List<int> indexes = new List<int>();
+
+
+            Net.AddNode(Network.NodeType.Cpt, "result2");
+
+            foreach (BayesNode node in BayesStructure)
+            {
+                foreach (int vertex in node.Layers[node.Layers.Count-1])
+                {
+                    indexes.Add(vertex);
+                    Net.AddArc("n" + vertex.ToString(), "result2");
+                }
+            }
+
+
+            probability = Helper.CountProbabilityDistributionForResult(Ldata, indexes);
+            SetNodeStateParent("result2");
+            Net.SetNodeDefinition("result2", probability);
+            Net.WriteFile(FileName + ".xdsl");
+        }
+
 
         /*
         public List<BayesResult> GetResults()
@@ -257,6 +332,51 @@ namespace LungCancerBayesNetwork
             return result;
         }
 
+        public BayesResult2 GetResult(List<BayesNode> BayesStructure)
+        {
+            BayesResult2 result = new BayesResult2();
+            List<double> probabilities = new List<double>();
+
+            Net.UpdateBeliefs();
+            foreach (CancerData testData in this.Tdata)
+            {
+                Net.ClearAllEvidence();
+                foreach (BayesNode node in BayesStructure)
+                {
+                    foreach (int vertex in node.Layers[0])
+                    {
+                        int idx = vertex - 1;
+                        if (testData.attributes[idx] > -1)
+                        {
+                            List<double> test = new List<double>();
+
+                            test.AddRange(Net.GetNodeValue("result2"));
+                            Net.SetEvidence("n" + vertex.ToString(), "s" + testData.attributes[idx]);
+                            Net.UpdateBeliefs();
+
+                            test.AddRange(Net.GetNodeValue("result2"));
+                            test.Clear();
+                        }
+                    }
+                }
+                probabilities.AddRange(Net.GetNodeValue("result2"));
+                Console.WriteLine("Result:" + probabilities.ElementAt(0) + " " + probabilities.ElementAt(1) + " " + probabilities.ElementAt(2));
+                int cancerClass = this.ClassForMaxElement(probabilities);
+                if (cancerClass == testData.cancerClass)
+                {
+                    result.Good++;
+                }
+                else
+                {
+                    result.Bad++;
+                }
+
+                probabilities.Clear();
+            }
+
+            return result;
+        }
+
         private int ClassForMaxElement(List<double> probabilities)
         {
             if (probabilities == null || probabilities.Count < 1)
@@ -299,9 +419,9 @@ namespace LungCancerBayesNetwork
         }
 
 
-        private Int32[] SetIndexes(int idx1, int idx2, int idx3)
+        private List<int> SetIndexes(int idx1, int idx2, int idx3)
         {
-            return new Int32[] { idx1, idx2, idx3 };
+            return new List<int> { idx1, idx2, idx3 };
         }
 
     }
