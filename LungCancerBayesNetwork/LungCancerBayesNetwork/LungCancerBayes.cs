@@ -172,12 +172,15 @@ namespace LungCancerBayesNetwork
             Net.SetNodeDefinition("c19", childProbability);
 
             //Result
-            resultProbability = Helper.CountProbabilityDistributionForResult(Ldata, SetIndexes(6, 2, 20));
+            Int32[] indexes = { 6, 2, 20, 56, 19 };
+            resultProbability = Helper.CountProbabilityDistributionForResult(Ldata,indexes );
             Net.AddNode(Network.NodeType.Cpt, "result");
 
             Net.AddArc("c6", "result");
             Net.AddArc("c2", "result");
             Net.AddArc("c20", "result");
+            Net.AddArc("c56", "result");
+            Net.AddArc("c19", "result");
 
             SetNodeStateParent("result");
             Net.SetNodeDefinition("result", resultProbability);
@@ -220,18 +223,24 @@ namespace LungCancerBayesNetwork
             Net.UpdateBeliefs();
             foreach (CancerData testData in this.Tdata)
             {
+                Net.ClearAllEvidence();
                 foreach (string attr in StructureAttributes)
                 {
                     int idx = this.AttritubeToIndex(attr);
-                    if (testData.attributes[idx] > -1)
+                    if (testData.attributes[idx] > -1 && attr.IndexOf('p') >= 0)
                     {
+                        List<double> test = new List<double>();
+
+                        test.AddRange(Net.GetNodeValue("result"));
                         Net.SetEvidence(attr, "s" + testData.attributes[idx]);
                         Net.UpdateBeliefs();
 
-                        probabilities.AddRange(Net.GetNodeValue("result"));
+                        test.AddRange(Net.GetNodeValue("result"));
+                         test.Clear();
                     }
                 }
-
+                probabilities.AddRange(Net.GetNodeValue("result"));
+                Console.WriteLine("Result:" + probabilities.ElementAt(0) + " " + probabilities.ElementAt(1) + " " + probabilities.ElementAt(2));
                 int cancerClass = this.ClassForMaxElement(probabilities);
                 if (cancerClass == testData.cancerClass)
                 {
@@ -294,6 +303,7 @@ namespace LungCancerBayesNetwork
         {
             return new Int32[] { idx1, idx2, idx3 };
         }
+
     }
 
 }
