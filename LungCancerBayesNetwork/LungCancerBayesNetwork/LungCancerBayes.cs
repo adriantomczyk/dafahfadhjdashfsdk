@@ -215,6 +215,7 @@ namespace LungCancerBayesNetwork
         public BayesResult2 GetResult()
         {
             BayesResult2 result = new BayesResult2();
+            List<double> probabilities = new List<double>();
 
             Net.UpdateBeliefs();
             foreach (CancerData testData in this.Tdata)
@@ -226,41 +227,46 @@ namespace LungCancerBayesNetwork
                     {
                         Net.SetEvidence(attr, "s" + testData.attributes[idx]);
                         Net.UpdateBeliefs();
-                        int cancerClass = this.ClassForMaxElement(Net.GetNodeValue("result"));
-                        if (cancerClass == testData.cancerClass)
-                        {
-                            result.Good++;
-                        }
-                        else
-                        {
-                            result.Bad++;
-                        }
+
+                        probabilities.AddRange(Net.GetNodeValue("result"));
                     }
                 }
+
+                int cancerClass = this.ClassForMaxElement(probabilities);
+                if (cancerClass == testData.cancerClass)
+                {
+                    result.Good++;
+                }
+                else
+                {
+                    result.Bad++;
+                }
+
+                probabilities.Clear();
             }
 
             return result;
         }
 
-        private int ClassForMaxElement(double[] array)
+        private int ClassForMaxElement(List<double> probabilities)
         {
-            if(array == null || array.Length < 1)
+            if (probabilities == null || probabilities.Count < 1)
             {
                 return -1;
             }
 
             int idx = 0;
-            double maxValue = array[0];
-            for (int i = 1; i < array.Length; ++i )
+            double maxValue = probabilities[0];
+            for (int i = 1; i < probabilities.Count; ++i)
             {
-                if(array[i] > maxValue)
+                if (probabilities[i] > maxValue)
                 {
-                    maxValue = array[i];
+                    maxValue = probabilities[i];
                     idx = i;
                 }
             }
 
-            return (idx+1);
+            return ((idx%3)+1);
         }
 
         private int AttritubeToIndex(string attr)
