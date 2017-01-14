@@ -212,33 +212,37 @@ namespace LungCancerBayesNetwork
             double[] probability;
             List<int> AddedVertexes = new List<int>();
 
-            foreach (BayesNode node in BayesStructure)
+            int layers = BayesStructure[0].Layers.Count;
+
+            for (int currentLayer = 0; currentLayer < layers; ++currentLayer)
             {
-                for (int i = 0; i < node.Layers.Count; ++i)
+                for (int x = 0; x < BayesStructure.Count; x++)
                 {
-                    for (int j = 0; j < node.Layers[i].Count; ++j)
+                    foreach (int vertex in BayesStructure[x].Layers[currentLayer])
                     {
-                        if (i == 0)
+                        int t = vertex;
+                        if (currentLayer == 0)
                         {
-                            probability = Helper.CountProbabilityForParentVertex(Ldata, node.Layers[i][j]);
-                            Net.AddNode(Network.NodeType.Cpt, "n" + node.Layers[i][j].ToString());
-                            SetNodeStates("n" + node.Layers[i][j].ToString());
-                            Net.SetNodeDefinition("n" + node.Layers[i][j].ToString(), probability);
+                            probability = Helper.CountProbabilityForParentVertex(Ldata, vertex);
+                            Net.AddNode(Network.NodeType.Cpt, "n" + vertex.ToString());
+                            SetNodeStates("n" + vertex.ToString());
+                            Net.SetNodeDefinition("n" + vertex.ToString(), probability);
                         }
                         else
                         {
-                            probability = Helper.CountProbabilityDistributionForChildVertex(Ldata, 6, node.Layers[i - 1]);
-                            Net.AddNode(Network.NodeType.Cpt, "n" + node.Layers[i][j].ToString());
-                            SetNodeStates("n" + node.Layers[i][j].ToString());
-                            foreach (int vertex in node.Layers[i - 1])
+                            List<int> s = BayesStructure[x].Layers[currentLayer - 1];
+                            probability = Helper.CountProbabilityDistributionForChildVertex(Ldata, vertex, BayesStructure[x].Layers[currentLayer - 1]);
+                            Net.AddNode(Network.NodeType.Cpt, "n" + vertex.ToString());
+                            foreach (int v in BayesStructure[x].Layers[currentLayer - 1])
                             {
-                                Net.AddArc("n" + vertex.ToString(), "n" + node.Layers[i][j].ToString());
+                                Net.AddArc("n" + v.ToString(), "n" + vertex.ToString());
                             }
+                            SetNodeStates("n" + vertex.ToString());
+                            Net.SetNodeDefinition("n" + vertex, probability);
                         }
                     }
                 }
             }
-
 
 
             //Result
@@ -249,7 +253,7 @@ namespace LungCancerBayesNetwork
 
             foreach (BayesNode node in BayesStructure)
             {
-                foreach (int vertex in node.Layers[node.Layers.Count-1])
+                foreach (int vertex in node.Layers[node.Layers.Count - 1])
                 {
                     indexes.Add(vertex);
                     Net.AddArc("n" + vertex.ToString(), "result2");
@@ -264,32 +268,6 @@ namespace LungCancerBayesNetwork
         }
 
 
-        /*
-        public List<BayesResult> GetResults()
-        {
-            List<BayesResult> result = new List<BayesResult>();
-            Net.UpdateBeliefs();
-            foreach (BayesStructureSchema child in Schema)
-            {
-                for (int i = 0; i < 4; i++)
-                {
-                    Net.SetEvidence(child.ChildId, "s" + i.ToString());
-                    Net.UpdateBeliefs();
-                    foreach (string parent in child.Parents)
-                    {
-                        for (int j = 0; j < 3; ++j)
-                        {                           //var f = Net.GetNodeValue(parent);
-                            double probability = (Net.GetNodeValue("result"))[j];
-                            result.Add(new BayesResult(parent, "s" + j.ToString(), child.ChildId, "s" + i.ToString(), probability));
-                        }
-                    }
-                    Net.ClearEvidence(child.ChildId);
-                }
-
-            }
-            return result;
-        }
-        */
         public BayesResult2 GetResult()
         {
             BayesResult2 result = new BayesResult2();
@@ -331,6 +309,7 @@ namespace LungCancerBayesNetwork
 
             return result;
         }
+
 
         public BayesResult2 GetResult(List<BayesNode> BayesStructure)
         {
