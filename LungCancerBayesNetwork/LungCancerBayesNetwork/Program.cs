@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LungCancerBayesNetwork.Models;
 
 namespace LungCancerBayesNetwork
 {
@@ -62,10 +63,13 @@ namespace LungCancerBayesNetwork
         }
         static void Main(string[] args)
         {
-            LibraryTest libTest = new LibraryTest();
-            libTest.JustTest();
-            //System.Console.Write(getDataFromFile("lung-cancer.data.txt").ElementAt(20).ToString());
-            //System.Console.ReadKey();
+            List<CancerData> data = getDataFromFile("lung-cancer.data.txt");
+
+            LungCancerBayes bayes = new LungCancerBayes(data);
+            bayes.CreateStructre();
+            //bayes.PrintResult(bayes.GetResults());
+            bayes.PrintResult(bayes.GetResult());
+            Console.ReadLine();
         }
     }
 }

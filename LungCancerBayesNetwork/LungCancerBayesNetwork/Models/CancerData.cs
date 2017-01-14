@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LungCancerBayesNetwork
+namespace LungCancerBayesNetwork.Models
 {
-    class CancerData
+    public class CancerData
     {
         public CancerData(Int16 cancerClass, Int16 [] attributes)
         {
@@ -14,10 +14,10 @@ namespace LungCancerBayesNetwork
             this.attributes = attributes;
         }
 
-        private Int16 cancerClass { get; set; }
-        private Int16 [] attributes { get; set;}
+        public Int16 cancerClass { get; set; }
+        public Int16 [] attributes { get; set;}
 
-        public String ToString()
+        public override String ToString()
         {
             String result = "";
             result += "Class: " + cancerClass.ToString()+"\n";

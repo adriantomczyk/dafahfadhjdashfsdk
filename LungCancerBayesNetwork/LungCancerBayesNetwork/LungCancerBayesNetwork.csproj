@@ -48,13 +48,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CancerData.cs" />
-    <Compile Include="librarytest.cs" />
+    <Compile Include="Helpers\Helper.cs" />
+    <Compile Include="Models\BayesResult.cs" />
+    <Compile Include="Models\BayesStructureSchema.cs" />
+    <Compile Include="Models\CancerData.cs" />
+    <Compile Include="Helpers\DataSegmentator.cs" />
+    <Compile Include="LungCancerBayes.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
