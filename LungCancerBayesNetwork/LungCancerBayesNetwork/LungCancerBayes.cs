@@ -16,22 +16,18 @@ namespace LungCancerBayesNetwork
         private List<CancerData> Tdata { get; set; }
         private Network Net { get; set; }
         private List<BayesStructureSchema> Schema { get; set; }
-        private List<BayesNode> BayesStructure { get; set; }
-        //private List<string> AvailableStates { get; set; }
         private string FileName { get; set; }
 
         private List<string> StructureAttributes { get; set; }
 
+        /// <summary>
+        /// Konstruktor
+        /// </summary>
+        /// <param name="cancerData">Model z danymi</param>
         public LungCancerBayes(List<CancerData> cancerData)
         {
             Data = cancerData;
             this.Init();
-        }
-
-        public LungCancerBayes(List<CancerData> cancerData, List<BayesNode> bayesStructure)
-        {
-            Data = cancerData;
-            BayesStructure = bayesStructure;
         }
 
         private void Init()
@@ -53,11 +49,18 @@ namespace LungCancerBayesNetwork
             StructureAttributes = new List<string>() { "p3", "p26", "p38", "p13", "p29", "p41", "p15", "p37", "p42", "c6", "c2", "c20", "c56", "c19" };
         }
 
+        /// <summary>
+        /// Ustawienie nazwy pliku wynikowego
+        /// </summary>
+        /// <param name="fileName">Nazwa pliku</param>
         public void SetFileName(string fileName)
         {
             this.FileName = fileName;
         }
 
+        /// <summary>
+        /// Wyczyszczenie algorytmu (potrzebne przy podawaniu kolejnej struktury do tej samej instacji)
+        /// </summary>
         public void Clear()
         {
             this.Net = new Network();
@@ -72,6 +75,7 @@ namespace LungCancerBayesNetwork
             Net.DeleteOutcome(nodeId, 0);
             Net.DeleteOutcome(nodeId, 0);
         }
+
         private void SetNodeStateParent(string nodeId)
         {
             for (int i = 1; i <= 3; i++)
@@ -82,7 +86,10 @@ namespace LungCancerBayesNetwork
             Net.DeleteOutcome(nodeId, 0);
         }
 
-        public void CreateStructre()
+        /// <summary>
+        /// Tworzenie domyślnej strutury sieci bayes'a
+        /// </summary>
+        public void CreateDefaultStructre()
         {
             double[] childProbability;
             double[] parentProbability;
@@ -207,7 +214,11 @@ namespace LungCancerBayesNetwork
             Net.WriteFile("lungcancer.xdsl");
         }
 
-        public void CreateStructre(List<BayesNode> BayesStructure)
+        /// <summary>
+        /// Metoda tworząca strukturę sieci bayes'a
+        /// </summary>
+        /// <param name="BayesStructure">Model ze zdefiniowaną strukturą grafu</param>
+        public void CreateStructre(List<BayesBranch> BayesStructure)
         {
             double[] probability;
             List<int> AddedVertexes = new List<int>();
@@ -251,7 +262,7 @@ namespace LungCancerBayesNetwork
 
             Net.AddNode(Network.NodeType.Cpt, "result2");
 
-            foreach (BayesNode node in BayesStructure)
+            foreach (BayesBranch node in BayesStructure)
             {
                 foreach (int vertex in node.Layers[node.Layers.Count - 1])
                 {
@@ -264,13 +275,19 @@ namespace LungCancerBayesNetwork
             probability = Helper.CountProbabilityDistributionForResult(Ldata, indexes);
             SetNodeStateParent("result2");
             Net.SetNodeDefinition("result2", probability);
-            Net.WriteFile(FileName + ".xdsl");
+            if (!String.IsNullOrEmpty(FileName))
+            {
+                Net.WriteFile(FileName + ".xdsl");
+            }
         }
 
-
-        public BayesResult2 GetResult()
+        /// <summary>
+        /// Zwraca wynik z domyślnej struktury sieci bayesa
+        /// </summary>
+        /// <returns></returns>
+        public BayesResult GetDefaultResult()
         {
-            BayesResult2 result = new BayesResult2();
+            BayesResult result = new BayesResult();
             List<double> probabilities = new List<double>();
 
             Net.UpdateBeliefs();
@@ -310,31 +327,39 @@ namespace LungCancerBayesNetwork
             return result;
         }
 
-
-        public BayesResult2 GetResult(List<BayesNode> BayesStructure)
+        /// <summary>
+        /// Metoda obliczająca wynik
+        /// </summary>
+        /// <param name="bayesStructure">Model ze zdefiniowaną strukturą grafu</param>
+        /// <param name="outputLayers">Lista zawierająca nr warstw (od 1), które mają mieć wpływ na wynik</param>
+        /// <returns>Ilość dobrych i złych trafień algorytmu</returns>
+        public BayesResult GetResult(List<BayesBranch> bayesStructure, List<int> outputLayers)
         {
-            BayesResult2 result = new BayesResult2();
+            BayesResult result = new BayesResult();
             List<double> probabilities = new List<double>();
 
             Net.UpdateBeliefs();
             foreach (CancerData testData in this.Tdata)
             {
                 Net.ClearAllEvidence();
-                foreach (BayesNode node in BayesStructure)
+                foreach (int layer in outputLayers)
                 {
-                    foreach (int vertex in node.Layers[0])
+                    foreach (BayesBranch node in bayesStructure)
                     {
-                        int idx = vertex - 1;
-                        if (testData.attributes[idx] > -1)
+                        foreach (int vertex in node.Layers[layer-1])
                         {
-                            List<double> test = new List<double>();
+                            int idx = vertex - 1;
+                            if (testData.attributes[idx] > -1)
+                            {
+                                List<double> test = new List<double>();
 
-                            test.AddRange(Net.GetNodeValue("result2"));
-                            Net.SetEvidence("n" + vertex.ToString(), "s" + testData.attributes[idx]);
-                            Net.UpdateBeliefs();
+                                test.AddRange(Net.GetNodeValue("result2"));
+                                Net.SetEvidence("n" + vertex.ToString(), "s" + testData.attributes[idx]);
+                                Net.UpdateBeliefs();
 
-                            test.AddRange(Net.GetNodeValue("result2"));
-                            test.Clear();
+                                test.AddRange(Net.GetNodeValue("result2"));
+                                test.Clear();
+                            }
                         }
                     }
                 }
@@ -355,6 +380,7 @@ namespace LungCancerBayesNetwork
 
             return result;
         }
+
 
         private int ClassForMaxElement(List<double> probabilities)
         {
@@ -383,16 +409,12 @@ namespace LungCancerBayesNetwork
             Int32.TryParse(attr.Substring(1), out result);
             return (result - 1);
         }
-        /*
-        public void PrintResult(List<BayesResult> result)
-        {
-            foreach(BayesResult b in result)
-            {
-                Console.WriteLine(b.ToString());
-            }
-        }
-        */
-        public void PrintResult(BayesResult2 result)
+
+        /// <summary>
+        /// Metoda wyświetlająca wynik działania sieci bayes'a
+        /// </summary>
+        /// <param name="result">Model z wynikiem</param>
+        public void PrintResult(BayesResult result)
         {
             Console.WriteLine("Good: {0}, Bad: {1}", result.Good, result.Bad);
         }

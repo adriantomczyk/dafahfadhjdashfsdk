@@ -48,8 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BayesStructure.cs" />
     <Compile Include="Helpers\Helper.cs" />
+    <Compile Include="Models\BayesBranch.cs" />
     <Compile Include="Models\BayesResult.cs" />
     <Compile Include="Models\BayesStructureSchema.cs" />
     <Compile Include="Models\CancerData.cs" />
