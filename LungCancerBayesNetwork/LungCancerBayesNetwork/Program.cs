@@ -64,6 +64,8 @@ namespace LungCancerBayesNetwork
         }
         static void Main(string[] args)
         {
+            BayesBruteForce();
+
             List<CancerData> data = getDataFromFile("lung-cancer.data.txt");
             //##########################################################################Structure1
             LungCancerBayes bayes = new LungCancerBayes(data);
@@ -309,6 +311,55 @@ namespace LungCancerBayesNetwork
             bayes.PrintResult(bayes.GetResult(structure, new List<int>() { 1, 2 }));
             LungCancerBayes.SendResultToFile(bayes.GetResult(structure, new List<int>() { 1, 2 }), "test6 2 layers");
             Console.ReadLine();
+        }
+
+        public static void BayesBruteForce()
+        {
+            List<CancerData> data = getDataFromFile("lung-cancer.data.txt");
+            LungCancerBayes bayes = new LungCancerBayes(data);
+            BayesResult result;
+
+            IEnumerable<IEnumerable<int>> permutations = Helper.GetPermutations(Enumerable.Range(1, 56), 14);
+
+            foreach (IEnumerable<int> permutation in permutations)
+            {
+                List<int> perm = permutation.ToList();
+                List<BayesBranch> structure = new List<BayesBranch>();
+
+                structure.Add(new BayesBranch
+                {
+                    Layers = new List<List<int>>()
+                    {
+                        new List<int>() { perm[0], perm[1], perm[2] },
+                        new List<int>() { perm[3], perm[4] }
+                    }
+                });
+
+                structure.Add(new BayesBranch
+                {
+                    Layers = new List<List<int>>()
+                    {
+                        new List<int>() { perm[5], perm[6], perm[7] },
+                        new List<int>() { perm[8], perm[9] }
+                    }
+                });
+
+                structure.Add(new BayesBranch
+                {
+                    Layers = new List<List<int>>()
+                    {
+                        new List<int>() { perm[10], perm[11], perm[12] },
+                        new List<int>() { perm[13] }
+                    }
+                });
+
+
+                bayes.Clear();
+                //bayes.SetFileName("test2"); // jak nie ustawisz filename to sie do pliku nie zapisze
+                bayes.CreateStructre(structure);
+                result = bayes.GetResult(structure, new List<int>() { 1 });
+
+            }
         }
     }
 }

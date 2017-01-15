@@ -65,6 +65,7 @@ namespace LungCancerBayesNetwork
         public void Clear()
         {
             this.Net = new Network();
+            this.FileName = string.Empty;
         }
 
         private void SetNodeStates(string nodeId)
