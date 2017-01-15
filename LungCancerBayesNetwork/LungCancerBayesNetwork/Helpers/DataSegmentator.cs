@@ -18,7 +18,7 @@ namespace LungCancerBayesNetwork.Helpers
             Random rand = new Random();
             do
             {
-                Int32 number = rand.Next(0,data.Count);
+                Int32 number = rand.Next(0, data.Count);
                 CancerData d = data.ElementAt(number);
                 if (learningData.Count > 0)
                 {
@@ -38,6 +38,37 @@ namespace LungCancerBayesNetwork.Helpers
                 }
                 data.RemoveAt(number);
             } while (learningData.Count + testData.Count < data.Count);
-        } 
+        }
+        static public void generateDataSegmentation(List<CancerData> data, int numberOfLearningData, int numberOfTestData)
+        {
+            List<CancerData> lDataTemp = copyToArray(data);
+            List<CancerData> tDataTemp = copyToArray(data);
+            testData = new List<CancerData>();
+            learningData = new List<CancerData>();
+            Random rand = new Random();
+            do
+            {
+                Int32 number = rand.Next(0, lDataTemp.Count);
+                CancerData d = lDataTemp.ElementAt(number);
+                learningData.Add(d);
+                lDataTemp.RemoveAt(number);
+            } while (learningData.Count < numberOfLearningData);
+            do
+            {
+                Int32 number = rand.Next(0, tDataTemp.Count);
+                CancerData d = tDataTemp.ElementAt(number);
+                testData.Add(d);
+                tDataTemp.RemoveAt(number);
+            } while (testData.Count < numberOfTestData);
+        }
+        static private List<CancerData> copyToArray(List<CancerData> data)
+        {
+            List<CancerData> result = new List<CancerData>();
+            foreach(CancerData element in data)
+            {
+                result.Add(element);
+            }
+            return result;
+        }
     }
 }

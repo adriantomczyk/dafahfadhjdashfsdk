@@ -14,23 +14,12 @@ namespace LungCancerBayesNetwork.Helpers
             double[] result = new double[(int)Math.Pow(4, childAttributesIndexes.Count + 1)];
             foreach (CancerData element in data)
             {
-                //Int32 attrIndex = 0;
-                //foreach (Int32 index in childAttributesIndexes)
-                //{
-                //    Int32 elementValue = element.attributes[elementIndex-1];
-                //    Int32 attributeValue = element.attributes[index-1];
-                //    if (elementValue>=0 && attributeValue>= 0)
-                //    {
-                //        result[]++;
-                //        result[(attrIndex * 16) + (attributeValue * 4) + elementValue]++;
-                //    }
-                //    attrIndex++;
-                //}
-                int x = element.attributes[elementIndex - 1] * 64;
-                int y = element.attributes[childAttributesIndexes[0] - 1] * 16;
-                int z = element.attributes[childAttributesIndexes[1] - 1] * 4;
-                int t = element.attributes[childAttributesIndexes[2] - 1];
-                if (x > 0 && y > 0 && z > 0 && t > 0) result[x + y + z + t]++;
+                int sum = element.attributes[elementIndex - 1] * (int)Math.Pow(4, childAttributesIndexes.Count);
+                for (int i = 0; i < childAttributesIndexes.Count; i++)
+                {
+                    sum += element.attributes[childAttributesIndexes[i] - 1] * (int)Math.Pow(4, childAttributesIndexes.Count - 1 - i);
+                }
+                if (sum >= 0) result[sum]++;
             }
             for (int i = 0; i < result.Length; i++)
             {
@@ -48,22 +37,12 @@ namespace LungCancerBayesNetwork.Helpers
             double[] result = new double[3 * (int)Math.Pow(4, childAttributesIndexes.Count)];
             foreach (CancerData element in data)
             {
-                int x = (element.cancerClass - 1) * 48;
-                int y = element.attributes[childAttributesIndexes[0] - 1] * 16;
-                int z = element.attributes[childAttributesIndexes[1] - 1] * 4;
-                int t = element.attributes[childAttributesIndexes[2] - 1];
-                if (x > 0 && y > 0 && z > 0 && t > 0) result[x + y + z + t]++;
-                //    Int32 attrIndex = 0;
-                //    foreach (Int32 index in childAttributesIndexes)
-                //    {
-                //        Int32 elementValue = element.cancerClass;
-                //        Int32 attributeValue = element.attributes[index-1];
-                //        if (elementValue >= 0 && attributeValue >= 0)
-                //        {
-                //            result[(attrIndex * 12) + (attributeValue * 4) + elementValue]++;
-                //        }
-                //        attrIndex++;
-                //    }
+                int sum = (element.cancerClass - 1) * 3 * (int)Math.Pow(4, childAttributesIndexes.Count - 1);
+                for (int i = 0; i < childAttributesIndexes.Count; i++)
+                {
+                    sum += element.attributes[childAttributesIndexes[i] - 1] * (int)Math.Pow(4, childAttributesIndexes.Count - i - 1);
+                }
+                if (sum >= 0) result[sum]++;
             }
 
             for (int i = 0; i < result.Length; i++)

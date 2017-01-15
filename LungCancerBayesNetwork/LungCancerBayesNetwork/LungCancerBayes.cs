@@ -3,6 +3,7 @@ using LungCancerBayesNetwork.Models;
 using Smile;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,7 +33,7 @@ namespace LungCancerBayesNetwork
 
         private void Init()
         {
-            DataSegmentator.generateDataSegmentation(this.Data, 0.2);
+            DataSegmentator.generateDataSegmentation(this.Data,this.Data.Count,10);
             this.Ldata = DataSegmentator.learningData;
             this.Tdata = DataSegmentator.testData;
             this.Net = new Network();
@@ -310,7 +311,7 @@ namespace LungCancerBayesNetwork
                     }
                 }
                 probabilities.AddRange(Net.GetNodeValue("result"));
-                Console.WriteLine("Result:" + probabilities.ElementAt(0) + " " + probabilities.ElementAt(1) + " " + probabilities.ElementAt(2));
+                SendProbabilitiesToFile(probabilities);
                 int cancerClass = this.ClassForMaxElement(probabilities);
                 if (cancerClass == testData.cancerClass)
                 {
@@ -364,7 +365,7 @@ namespace LungCancerBayesNetwork
                     }
                 }
                 probabilities.AddRange(Net.GetNodeValue("result2"));
-                Console.WriteLine("Result:" + probabilities.ElementAt(0) + " " + probabilities.ElementAt(1) + " " + probabilities.ElementAt(2));
+                SendProbabilitiesToFile(probabilities);
                 int cancerClass = this.ClassForMaxElement(probabilities);
                 if (cancerClass == testData.cancerClass)
                 {
@@ -417,6 +418,20 @@ namespace LungCancerBayesNetwork
         public void PrintResult(BayesResult result)
         {
             Console.WriteLine("Good: {0}, Bad: {1}", result.Good, result.Bad);
+        }
+        public static void SendResultToFile(BayesResult result,string testName)
+        {
+            String line = testName+" Good: " + result.Good + ", Bad: " + result.Bad;
+            System.IO.StreamWriter file = File.AppendText("TestFile.txt");
+            file.WriteLine(line);
+            file.Close();
+        }
+        public static void SendProbabilitiesToFile(List<double> probabilities)
+        {
+            String line = "Result:" + probabilities.ElementAt(0) + " " + probabilities.ElementAt(1) + " " + probabilities.ElementAt(2);
+            System.IO.StreamWriter file = File.AppendText("TestFile.txt");
+            file.WriteLine(line);
+            file.Close();
         }
 
 
